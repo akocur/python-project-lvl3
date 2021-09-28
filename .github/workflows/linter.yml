@@ -1,0 +1,26 @@
+name: Linter
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1.1.4
+
+      - name: Install dependencies
+        run: make install
+
+      - name: Run linter
+        run: make lint

@@ -7,7 +7,7 @@ test-coverage:
 code-climate:
 	poetry run pytest --cov=page_loader --cov-report xml
 lint:
-	poetry run flake8 page_loader
+	poetry run flake8
 selfcheck:
 	poetry check
 check: selfcheck test lint

@@ -16,6 +16,7 @@ pytest = "^6.2.5"
 wemake-python-styleguide = "^0.15.3"
 pytest-cov = "^2.12.1"
 requests-mock = "^1.9.3"
+asciinema = "^2.1.0"
 
 [tool.poetry.scripts]
 page-loader = "page_loader.scripts.page_loader:main"

@@ -16,21 +16,16 @@ def _url_to_file_name(url: str) -> str:
     docs-python-org-8080-3-library-urllib-parse-html.html
 
     """
-    url_with_scheme = url if url.startswith('http') else ''.join([
-        'https://',
-        url,
-    ])
-    urlparse = urllib.parse.urlparse(url_with_scheme)
-    domain_and_path = ''.join([urlparse.netloc, urlparse.path.rstrip('/')])
-    return ''.join([
-        re.sub('[^a-zA-Z0-9]', '-', domain_and_path),
-        '.html',
-    ])
+    urlparse = urllib.parse.urlparse(url)
+    path = urlparse.path.rstrip('/')
+    domain_and_path = f'{urlparse.netloc}{path}'
+    file_name = re.sub('[^a-zA-Z0-9]', '-', domain_and_path)
+    return f'{file_name}.html'
 
 
-def download(url: str, dir_path: str) -> str:
+def download(url: str, dir_output_path: str) -> str:
     """
-    Download data from url and save to dir_path.
+    Download data from url and save to dir_output_path.
 
     >>> download('https://git-scm.com/docs/git-commit', '/home/user/')
     '/home/user/git-scm-com-docs-git-commit.html'
@@ -39,9 +34,10 @@ def download(url: str, dir_path: str) -> str:
     '/home/user/docs-python-org-80-3-library.html'
 
     """
-    response = requests.get(url)
-    file_name = _url_to_file_name(url)
-    file_path = Path(dir_path) / file_name
+    url_with_scheme = url if url.startswith('http') else f'https://{url}'
+    response = requests.get(url_with_scheme)
+    file_name = _url_to_file_name(url_with_scheme)
+    file_path = Path(dir_output_path) / file_name
     file_path.write_text(response.text)
 
     return str(file_path.resolve())

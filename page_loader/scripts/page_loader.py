@@ -38,6 +38,7 @@ def main():
     args = parser.parse_args()
     if not Path(args.dir_path).exists():
         print('No such directory:', args.dir_path)  # noqa: WPS421
+        return
     path = download(args.url, args.dir_path)
     print(path)  # noqa: WPS421
 

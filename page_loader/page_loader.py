@@ -1,26 +1,13 @@
-import re
-import urllib
 from pathlib import Path
 
+import bs4
 import requests
 
-
-def _url_to_file_name(url: str) -> str:
-    """
-    Format the url to the correct html file name.
-
-    Replace everything except letters and numbers with a hyphen.
-
-    >>> _url_to_file_name('https://docs.python.org:8080/3/library/\
-        urllib.parse.html?highlight=url#urllib.parse.urlparse')
-    docs-python-org-8080-3-library-urllib-parse-html.html
-
-    """
-    urlparse = urllib.parse.urlparse(url)
-    path = urlparse.path.rstrip('/')
-    domain_and_path = f'{urlparse.netloc}{path}'
-    file_name = re.sub('[^a-zA-Z0-9]', '-', domain_and_path)
-    return f'{file_name}.html'
+from page_loader.url import (
+    is_same_domain_or_subdomain,
+    normalize_url,
+    url_to_name,
+)
 
 
 def download(url: str, dir_output_path: str) -> str:
@@ -34,10 +21,43 @@ def download(url: str, dir_output_path: str) -> str:
     '/home/user/docs-python-org-80-3-library.html'
 
     """
-    url_with_scheme = url if url.startswith('http') else f'https://{url}'
-    response = requests.get(url_with_scheme)
-    file_name = _url_to_file_name(url_with_scheme)
+    normalized_url = normalize_url(url)
+    response = requests.get(normalized_url)
+    file_name = url_to_name(normalized_url, '.html')
     file_path = Path(dir_output_path) / file_name
-    file_path.write_text(response.text)
+    soup = bs4.BeautifulSoup(response.text, features='html.parser')
+    if soup.find('img'):
+        img_tags_of_domain_and_subdomain = filter(
+            lambda img: (
+                is_same_domain_or_subdomain(normalized_url, img.get('src'))
+            ),
+            soup.find_all('img'),
+        )
+        dir_for_images = (
+            Path(dir_output_path) / url_to_name(normalized_url, '_files')
+        )
+        dir_for_images.mkdir()
+        for img_tag in img_tags_of_domain_and_subdomain:
+            image_url = normalize_url(
+                img_tag.get('src'), parent_url=normalized_url,
+            )
+            image_path = download_image(image_url, dir_for_images)
+            img_tag['src'] = Path(image_path).relative_to(dir_output_path)
+    file_path.write_text(soup.prettify())
 
     return str(file_path.resolve())
+
+
+def download_image(url: str, output_dir: str) -> str:
+    """Download and save image to output_dir.
+
+    Return full image path.
+    """
+    response = requests.get(url)
+    content_type = response.headers.get('Content-Type', 'image/png')
+    _, image_type = content_type.split('/')
+    extension = f'.{image_type}'
+    image_name = url_to_name(response.url, extension)
+    image_path = Path(output_dir) / image_name
+    image_path.write_bytes(response.content)
+    return str(image_path.resolve())

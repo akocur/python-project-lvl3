@@ -5,7 +5,7 @@ DEFAULT_SCHEME = 'https'
 
 
 def is_same_domain_or_subdomain(url: str, verifiable_url: str) -> bool:
-    """Return True if cheched_url is same domain or subdomain else False.
+    """Return True if verifiable_url is same domain or subdomain else False.
 
     >>> is_same_domain_or_subdomain(\
         'http://sub.host.com/any/path/', 'http://sub.host.com/other/path')
@@ -47,7 +47,7 @@ def make_url_with_scheme(url: str, scheme: str) -> str:
     return f'{scheme}://{url_without_sheme}'
 
 
-def complete_url_with_slash(url: str):
+def complete_url_with_slash(url: str) -> str:
     """Add a slash to the end of the url if one not exist.
 
     >>> complete_url_with_slash('http://example.com/path/index.html')

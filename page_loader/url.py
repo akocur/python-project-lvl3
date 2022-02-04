@@ -140,7 +140,9 @@ def relative_url_to_absolute(url: str, parent_url: str) -> str:
     return absolute_url
 
 
-def url_to_name(url: str, extension: str) -> str:
+def url_to_name(
+    url: str, content_type: str, suffix=None, default_scheme='https',
+) -> str:
     """
     Format the url to a directory/file name.
 
@@ -148,11 +150,16 @@ def url_to_name(url: str, extension: str) -> str:
 
     >>> url_to_name('https://docs.python.org:8080/3/library/\
         urllib.parse.html?highlight=url#urllib.parse.urlparse')
-    docs-python-org-8080-3-library-urllib-parse-html.html
+    docs-python-org-8080-3-library-urllib-parse.html
 
     """
-    parsed_url = urllib.parse.urlparse(url, scheme=DEFAULT_SCHEME)
-    path = parsed_url.path.rstrip('/')
-    domain_and_path = f'{parsed_url.netloc}{path}'
-    file_name = re.sub('[^a-zA-Z0-9]', '-', domain_and_path)
-    return f'{file_name}{extension}'
+    normalized_url = normalize_url(url)
+    _, extension = content_type.split('/')
+    parsed_url = urllib.parse.urlparse(normalized_url, scheme=default_scheme)
+    path, *_ = parsed_url.path.rsplit(f'.{extension}')
+    domain_and_path = '{domain}{path}'.format(
+        domain=parsed_url.netloc,
+        path=path.rstrip('/'),
+    )
+    file_name = re.sub('[^a-zA-Z0-9\n]', '-', domain_and_path)
+    return f'{file_name}{suffix}' if suffix else f'{file_name}.{extension}'

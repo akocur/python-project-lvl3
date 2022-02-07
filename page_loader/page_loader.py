@@ -11,68 +11,45 @@ from page_loader.url import (
 
 
 def download(url: str, output_path: str, client=requests) -> str:
-    """
-    Download data from *url* and save to *output_path*.
-
-    >>> download('https://git-scm.com/docs/git-commit', '/home/user/')
-    '/home/user/git-scm-com-docs-git-commit.html'
-
-    >>> download('docs.python.org:80/3/library/', '/home/user/')
-    '/home/user/docs-python-org-80-3-library.html'
-
-    """
-    normalized_url = normalize_url(url)
-    response = client.get(normalized_url)
+    """Download data from *url* and save to *output_path*."""
+    url = normalize_url(url)
+    response = client.get(url)
     content_type = response.headers.get('content-type', 'text/html')
-    file_name = url_to_name(normalized_url, content_type)
-    file_path = Path(output_path) / file_name
-    files_dir_name = url_to_name(normalized_url, content_type, '_files')
-    files_dir = Path(output_path) / files_dir_name
-    image_paths = download_additional_files(
-        normalized_url, files_dir, response.text, 'img', 'src',
+    file_path = Path(output_path) / url_to_name(url, content_type)
+    files_dir = str(
+        Path(output_path) / url_to_name(url, content_type, '_files'),
     )
-    new_html = replace_links(
-        response.text, image_paths, str(files_dir), 'img', 'src',
-    )
-    link_paths = download_additional_files(
-        normalized_url, str(files_dir), response.text, 'link', 'href',
-    )
-    new_html = replace_links(
-        new_html, link_paths, str(files_dir), 'link', 'href',
-    )
-    file_path.write_text(new_html)
+    link_tags = (('img', 'src'), ('link', 'href'), ('script', 'src'))
+    new_links = []
+    for tag_name, link_attribute_name in link_tags:
+        local_links = download_additional_files(
+            url, files_dir, response.text, tag_name, link_attribute_name,
+        )
+        new_links.append((tag_name, link_attribute_name, local_links))
+    file_path.write_text(replace_links(response.text, new_links, files_dir))
 
     return str(file_path.resolve())
 
 
-def replace_links(
-    html: str,
-    new_links: dict,
-    files_dir: str,
-    tag_name: str,
-    link_attribute_name: str,
-) -> str:
+def replace_links(html: str, new_links: list, files_dir: str) -> str:
     """
-    Replace file links in *html* by *new_links* in tag whose name is tag_name.
+    Replace file links in *html* from *new_links*.
 
     html - html text.
-    new_links - Key is url. Value is absolute file path.
+    new_links - list of tuple (tag_name, link_attribute_name, new_links).
     files_dir - the directory where the files are stored.
-    tag_name - the name of tag in which the link needs to be changed.
-    link_attribute_name - link attribute name of tag
     Return new html text.
     """
     soup = bs4.BeautifulSoup(html, features='html.parser')
-    tags = soup.find_all(
-        lambda t: (  # noqa: WPS111
-            t.name == tag_name and t.get(link_attribute_name) in new_links
-        ),
-    )
-    for tag in tags:
-        link = tag.get(link_attribute_name)
-        old_path = new_links[link]
-        new_src = Path(old_path).relative_to(Path(files_dir).parent)
-        tag[link_attribute_name] = new_src
+    for tag_name, link_attribute_name, links in new_links:
+        tags = soup.find_all(tag_name)
+        for tag in tags:
+            link = tag.get(link_attribute_name)
+            if link not in links:
+                continue
+            new_path = links[link]
+            relative_path = Path(new_path).relative_to(Path(files_dir).parent)
+            tag[link_attribute_name] = relative_path
 
     return soup.prettify()
 

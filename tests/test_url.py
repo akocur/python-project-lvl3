@@ -57,6 +57,18 @@ from page_loader.url import url_to_name
             None,
             'www-sub-example-com-courses.html',
         ),
+        (
+            'http://www.sub.example.com/script.js',
+            'application/javascript',
+            None,
+            'www-sub-example-com-script.js',
+        ),
+        (
+            'https://js.stripe.com/v3/',
+            'application/javascript',
+            None,
+            'js-stripe-com-v3.js',
+        ),
     ],
 )
 def test_url_to_name(url, content_type, suffix, expected_name):

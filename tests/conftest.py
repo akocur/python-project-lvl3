@@ -129,3 +129,63 @@ def link_mocks(requests_mock):
     for request in requests:
         url, headers, text = request  # noqa: WPS110
         requests_mock.get(url, text=text, headers=headers)
+
+
+@pytest.fixture
+def script_mocks(requests_mock):
+    """Mock script urls."""
+    requests = [
+        (
+            'http://www.sub.example.com/script/script1.js',
+            {'Content-type': 'application/javascript'},
+            'text',
+        ),
+        (
+            'http://www.sub.example.com/path/to_something/script/script2.js',
+            {'Content-type': 'application/javascript'},
+            'text',
+        ),
+        (
+            'http://www.sub.example.com/path/scripts/script3.js',
+            {'Content-type': 'application/javascript'},
+            'text',
+        ),
+        (
+            'http://www.sub.example.com/script/script4.js',
+            {'Content-type': 'application/javascript'},
+            'text',
+        ),
+        (
+            'https://www.sub.example.com/script/script5.js',
+            {'Content-type': 'application/javascript'},
+            'text',
+        ),
+        (
+            'http://sub2.www.sub.example.com/path/script/script6.js',
+            {'Content-type': 'application/javascript'},
+            'text',
+        ),
+        (
+            'http://www.example.com/script/script7.js',
+            {'Content-type': 'application/javascript'},
+            'text',
+        ),
+        (
+            'http://www.example.com/script/script8.js',
+            {'Content-type': 'application/javascript'},
+            'text',
+        ),
+        (
+            'http://example.com/script/script9.js',
+            {'Content-type': 'application/javascript'},
+            'text',
+        ),
+        (
+            'http://other.com/script/script10.js',
+            {'Content-type': 'application/javascript'},
+            'text',
+        ),
+    ]
+    for request in requests:
+        url, headers, text = request  # noqa: WPS110
+        requests_mock.get(url, text=text, headers=headers)

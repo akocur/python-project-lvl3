@@ -154,7 +154,13 @@ def url_to_name(
 
     """
     normalized_url = normalize_url(url)
-    _, extension = content_type.split('/')
+    type_, subtype = content_type.split('/')
+    if type_ == 'application':
+        extensions = {'javascript': 'js'}
+        extension = extensions[subtype]
+    else:
+        extension = subtype
+
     parsed_url = urllib.parse.urlparse(normalized_url, scheme=default_scheme)
     path, *_ = parsed_url.path.rsplit(f'.{extension}')
     domain_and_path = '{domain}{path}'.format(

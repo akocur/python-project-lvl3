@@ -201,3 +201,81 @@ def test_replacement_of_original_link_to_files_with_local_ones(
     file_path = Path(download(url, tmp_path))
     assert file_path.exists()
     assert file_path.read_text() == expected_content
+
+
+def test_download_scripts(  # noqa: WPS218
+    tmp_path, requests_mock, script_mocks,
+):
+    """Test download().
+
+    Check that the download directory exists and contains script files that
+    belong to the domain and subdomains.
+    """
+    url = 'http://www.sub.example.com/path/to_something/'
+    base_name = 'www-sub-example-com'
+    expected_download_dir = (
+        Path(tmp_path) / f'{base_name}-path-to-something_files'
+    )
+    expected_file1 = (
+        expected_download_dir
+        / f'{base_name}-script-script1.js'
+    )
+    expected_file2 = (
+        expected_download_dir
+        / f'{base_name}-path-to-something-script-script2.js'
+    )
+    expected_file3 = (
+        expected_download_dir
+        / f'{base_name}-path-scripts-script3.js'
+    )
+    expected_file4 = (
+        expected_download_dir / f'{base_name}-script-script4.js'
+    )
+    expected_file5 = (
+        expected_download_dir / f'{base_name}-script-script5.js'
+    )
+    expected_file6 = (
+        expected_download_dir / f'sub2-{base_name}-path-script-script6.js'
+    )
+
+    assert not expected_download_dir.exists()
+    input_html_file = (
+        fixtures_path / 'input' / 'scripts.html'
+    )
+    text = input_html_file.read_text()
+    requests_mock.get(url, text=text)
+    download(url, tmp_path)
+    assert expected_download_dir.exists()
+    file_count = len(list(expected_download_dir.iterdir()))
+    assert file_count == 6
+    assert expected_file1.exists()
+    assert expected_file2.exists()
+    assert expected_file3.exists()
+    assert expected_file4.exists()
+    assert expected_file5.exists()
+    assert expected_file6.exists()
+    assert expected_file1.read_text() == 'text'
+
+
+def test_replacement_of_original_link_to_scripts_with_local_ones(
+    tmp_path, requests_mock, script_mocks,
+):
+    """Test download().
+
+    Check that the original links to the scripts from script tags of the
+    current domain and subdomains have been replaced with links to local
+    scripts.
+    """
+    url = 'http://www.sub.example.com/path/to_something/'
+    expected_html_file = (
+        fixtures_path / 'output' / 'scripts.html'
+    )
+    input_html_file = (
+        fixtures_path / 'input' / 'scripts.html'
+    )
+    expected_content = expected_html_file.read_text()
+    text = input_html_file.read_text()
+    requests_mock.get(url, text=text)
+    file_path = Path(download(url, tmp_path))
+    assert file_path.exists()
+    assert file_path.read_text() == expected_content

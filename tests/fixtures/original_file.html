@@ -1,0 +1,57 @@
+<!-- page_url = 'https://sub1.example.com/path/to/file.html' -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible"/>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+  <title>
+   Title
+  </title>
+  <!-- same domain links -->
+  <link href="/assets/file1.css" media="all" rel="stylesheet"/>
+  <link href="assets/file2.css" media="all" rel="stylesheet"/>
+  <link href="../assets/file3.css" media="all" rel="stylesheet"/>
+  <link href="file4.html" rel="prev" title="title"/>
+  <link href="/courses" rel="canonical"/>
+  <link href="https://sub1.example.com/assets/file5.css" media="all" rel="stylesheet"/>
+  <!-- sub domain links -->
+  <link href="http://sub2.sub1.example.com/path/assets/file6.css" media="all" rel="stylesheet"/>
+  <!-- other domain links -->
+  <link href="http://example.com/assets/file7.css" media="all" rel="stylesheet"/>
+  <link href="http://other.com/assets/file8.css" media="all" rel="stylesheet"/>
+ </head>
+ <body>
+  <h3>
+   <a href="/path/to">
+    link
+   </a>
+  </h3>
+  <!-- same domain images -->
+  <img alt="alt" class="class" src="/images/image1.png"/>
+  <img alt="alt" class="class" src="_images/image2.png"/>
+  <img alt="alt" class="class" src="../images/image3.png"/>
+  <img alt="alt" class="class" src="https://sub1.example.com/images/image4.jpg"/>
+  <!-- sub domain images -->
+  <img alt="alt" class="class" src="https://sub2.sub1.example.com/path/images/image5.png"/>
+  <!-- other domain images -->
+  <img alt="alt" class="class" src="https://example.com/images/image6.png"/>
+  <img alt="alt" class="class" src="https://other.com/images/image7.jpg"/>
+  <!-- same domain scripts -->
+  <script src="/static/script1.js">
+  </script>
+  <script src="_static/script2.js">
+  </script>
+  <script src="../static/script3.js">
+  </script>
+  <script src="https://sub1.example.com/static/script4.js">
+  </script>
+  <!-- sub domain scripts -->
+  <script src="https://sub2.sub1.example.com/path/static/script5.js">
+  </script>
+  <!-- other domain scripts -->
+  <script src="https://example.com/static/script6.js">
+  </script>
+  <script src="https://other.com/static/script7.js">
+  </script>
+ </body>
+</html>

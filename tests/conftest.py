@@ -6,54 +6,39 @@ def image_mocks(requests_mock):
     """Mock image urls."""
     requests = [
         (
-            'http://www.sub.example.com/image/image1.png',
+            'https://sub1.example.com/images/image1.png',
             {'Content-type': 'image/png'},
             b'image1',
         ),
         (
-            'http://www.sub.example.com/path/to_something/_image/image2.png',
+            'https://sub1.example.com/path/to/_images/image2.png',
             {'Content-type': 'image/png'},
             b'image2',
         ),
         (
-            'http://www.sub.example.com/path/_images/image3.png',
+            'https://sub1.example.com/path/images/image3.png',
             {'Content-type': 'image/png'},
             b'image3',
         ),
         (
-            'http://www.sub.example.com/image/image4.png',
-            {'Content-type': 'image/png'},
+            'https://sub1.example.com/images/image4.jpg',
+            {'Content-type': 'image/jpg'},
             b'image4',
         ),
         (
-            'https://www.sub.example.com/image/image5.jpg',
-            {'Content-type': 'image/jpg'},
+            'https://sub2.sub1.example.com/path/images/image5.png',
+            {'Content-type': 'image/png'},
             b'image5',
         ),
         (
-            'http://sub2.www.sub.example.com/path/image/image6.png',
+            'https://example.com/images/image6.png',
             {'Content-type': 'image/png'},
             b'image6',
         ),
         (
-            'http://sub.example.com/image/image7.png',
-            {'Content-type': 'image/png'},
+            'https://other.com/images/image7.jpg',
+            {'Content-type': 'image/jpg'},
             b'image7',
-        ),
-        (
-            'http://www.example.com/image/image8.png',
-            {'Content-type': 'image/png'},
-            b'image8',
-        ),
-        (
-            'http://example.com/image/image9.png',
-            {'Content-type': 'image/png'},
-            b'image9',
-        ),
-        (
-            'http://other.com/image/image10.png',
-            {'Content-type': 'image/png'},
-            b'image10',
         ),
     ]
     for request in requests:
@@ -66,63 +51,48 @@ def link_mocks(requests_mock):
     """Mock link urls."""
     requests = [
         (
-            'http://www.sub.example.com/assets/file1.css',
+            'https://sub1.example.com/assets/file1.css',
             {'Content-type': 'text/css'},
             'text',
         ),
         (
-            'http://www.sub.example.com/path/to_something/assets/file2.css',
+            'https://sub1.example.com/path/to/assets/file2.css',
             {'Content-type': 'text/css'},
             'text',
         ),
         (
-            'http://www.sub.example.com/path/assets/file3.css',
+            'https://sub1.example.com/path/assets/file3.css',
             {'Content-type': 'text/css'},
             'text',
         ),
         (
-            'http://www.sub.example.com/assets/file4.css',
-            {'Content-type': 'text/css'},
-            'text',
-        ),
-        (
-            'https://www.sub.example.com/assets/file5.css',
-            {'Content-type': 'text/css'},
-            'text',
-        ),
-        (
-            'http://sub2.www.sub.example.com/path/assets/file6.css',
-            {'Content-type': 'text/css'},
-            'text',
-        ),
-        (
-            'http://www.example.com/assets/file7.css',
-            {'Content-type': 'text/css'},
-            'text',
-        ),
-        (
-            'http://www.sub.example.com/courses',
+            'https://sub1.example.com/path/to/file4.html',
             {'Content-type': 'text/html'},
             'text',
         ),
         (
-            'http://www.example.com/assets/menu.css',
-            {'Content-type': 'text/css'},
-            'text',
-        ),
-        (
-            'http://example.com/assets/menu.css',
-            {'Content-type': 'text/css'},
-            'text',
-        ),
-        (
-            'http://other.com/assets/menu.css',
-            {'Content-type': 'text/css'},
-            'text',
-        ),
-        (
-            'http://other.com/courses',
+            'https://sub1.example.com/courses',
             {'Content-type': 'text/html'},
+            'text',
+        ),
+        (
+            'https://sub1.example.com/assets/file5.css',
+            {'Content-type': 'text/css'},
+            'text',
+        ),
+        (
+            'http://sub2.sub1.example.com/path/assets/file6.css',
+            {'Content-type': 'text/css'},
+            'text',
+        ),
+        (
+            'http://example.com/assets/file7.css',
+            {'Content-type': 'text/css'},
+            'text',
+        ),
+        (
+            'http://other.com/assets/file8.css',
+            {'Content-type': 'text/css'},
             'text',
         ),
     ]
@@ -136,52 +106,37 @@ def script_mocks(requests_mock):
     """Mock script urls."""
     requests = [
         (
-            'http://www.sub.example.com/script/script1.js',
+            'https://sub1.example.com/static/script1.js',
             {'Content-type': 'application/javascript'},
             'text',
         ),
         (
-            'http://www.sub.example.com/path/to_something/script/script2.js',
+            'https://sub1.example.com/path/to/_static/script2.js',
             {'Content-type': 'application/javascript'},
             'text',
         ),
         (
-            'http://www.sub.example.com/path/scripts/script3.js',
+            'https://sub1.example.com/path/static/script3.js',
             {'Content-type': 'application/javascript'},
             'text',
         ),
         (
-            'http://www.sub.example.com/script/script4.js',
+            'https://sub1.example.com/static/script4.js',
             {'Content-type': 'application/javascript'},
             'text',
         ),
         (
-            'https://www.sub.example.com/script/script5.js',
+            'https://sub2.sub1.example.com/path/static/script5.js',
             {'Content-type': 'application/javascript'},
             'text',
         ),
         (
-            'http://sub2.www.sub.example.com/path/script/script6.js',
+            'https://example.com/static/script6.js',
             {'Content-type': 'application/javascript'},
             'text',
         ),
         (
-            'http://www.example.com/script/script7.js',
-            {'Content-type': 'application/javascript'},
-            'text',
-        ),
-        (
-            'http://www.example.com/script/script8.js',
-            {'Content-type': 'application/javascript'},
-            'text',
-        ),
-        (
-            'http://example.com/script/script9.js',
-            {'Content-type': 'application/javascript'},
-            'text',
-        ),
-        (
-            'http://other.com/script/script10.js',
+            'https://other.com/static/script7.js',
             {'Content-type': 'application/javascript'},
             'text',
         ),

@@ -93,7 +93,7 @@ def download_additional_files(
             lambda t: (   # noqa: WPS111
                 t.name == tag_name
                 and is_same_domain_or_subdomain(
-                    url, t.get(link_attribute_name),
+                    normalized_url, t.get(link_attribute_name, ""),
                 )
             ),
         )
@@ -102,7 +102,7 @@ def download_additional_files(
             files_dir_path.mkdir()
 
         for tag in tags:
-            file_url = tag.get(link_attribute_name)
+            file_url = tag.get(link_attribute_name, '')
             normalized_file_url = normalize_url(
                 file_url, parent_url=normalized_url,
             )

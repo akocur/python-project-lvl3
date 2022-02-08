@@ -122,6 +122,8 @@ def relative_url_to_absolute(url: str, parent_url: str) -> str:
         parent_url='example.com/path')
     'https://example.com/image/image1.png'
     """
+    if parent_url.endswith('.html'):
+        parent_url, *_ = parent_url.rsplit('/', 1)
     normalized_parent_url = normalize_url(parent_url)
     parsed_parent_url = urllib.parse.urlparse(normalized_parent_url)
     if url.startswith('/'):
@@ -136,7 +138,7 @@ def relative_url_to_absolute(url: str, parent_url: str) -> str:
             new_url, normalized_new_parent_url,
         )
     else:
-        absolute_url = f'{parent_url}{url}'
+        absolute_url = f'{normalized_parent_url}{url}'
     return absolute_url
 
 
@@ -144,7 +146,7 @@ def url_to_name(
     url: str, content_type: str, suffix=None, default_scheme='https',
 ) -> str:
     """
-    Format the url to a directory/file name.
+    Create name for file/directory from url.
 
     Replace everything except letters and numbers with a hyphen.
 
@@ -153,7 +155,8 @@ def url_to_name(
     docs-python-org-8080-3-library-urllib-parse.html
 
     """
-    normalized_url = normalize_url(url)
+    url = normalize_url(url)
+    content_type, *_ = content_type.split(';')
     type_, subtype = content_type.split('/')
     if type_ == 'application':
         extensions = {'javascript': 'js'}
@@ -161,7 +164,7 @@ def url_to_name(
     else:
         extension = subtype
 
-    parsed_url = urllib.parse.urlparse(normalized_url, scheme=default_scheme)
+    parsed_url = urllib.parse.urlparse(url, scheme=default_scheme)
     path, *_ = parsed_url.path.rsplit(f'.{extension}')
     domain_and_path = '{domain}{path}'.format(
         domain=parsed_url.netloc,

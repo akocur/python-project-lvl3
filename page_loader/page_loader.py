@@ -5,20 +5,16 @@ import requests
 
 from page_loader.url import (
     is_same_domain_or_subdomain,
-    normalize_url,
+    relative_url_to_absolute,
     url_to_name,
 )
 
 
 def download(url: str, output_path: str, client=requests) -> str:
     """Download data from *url* and save to *output_path*."""
-    url = normalize_url(url)
     response = client.get(url)
-    content_type = response.headers.get('content-type', 'text/html')
-    file_path = Path(output_path) / url_to_name(url, content_type)
-    files_dir = str(
-        Path(output_path) / url_to_name(url, content_type, '_files'),
-    )
+    file_path = Path(output_path) / url_to_name(url)
+    files_dir = str(Path(output_path) / url_to_name(url, '_files'))
     link_tags = (('img', 'src'), ('link', 'href'), ('script', 'src'))
     new_links = []
     for tag_name, link_attribute_name in link_tags:
@@ -60,9 +56,7 @@ def download_file(url: str, output_path: str, client=requests) -> str:
     Return full file path.
     """
     response = client.get(url)
-    content_type = response.headers.get('content-type', 'text/html')
-    file_name = url_to_name(response.url, content_type)
-    file_path = Path(output_path) / file_name
+    file_path = Path(output_path) / url_to_name(response.url)
     file_path.write_bytes(response.content)
     return str(file_path.resolve())
 
@@ -85,7 +79,6 @@ def download_additional_files(
     If the *files_dir* doesn't exists, it will be created.
     Return dict. Key is file url, value is absolute file path.
     """
-    normalized_url = normalize_url(url)
     soup = bs4.BeautifulSoup(html, features='html.parser')
     file_paths = {}
     if soup.find(tag_name):
@@ -93,7 +86,7 @@ def download_additional_files(
             lambda t: (   # noqa: WPS111
                 t.name == tag_name
                 and is_same_domain_or_subdomain(
-                    normalized_url, t.get(link_attribute_name, ""),
+                    url, t.get(link_attribute_name, ""),
                 )
             ),
         )
@@ -103,9 +96,9 @@ def download_additional_files(
 
         for tag in tags:
             file_url = tag.get(link_attribute_name, '')
-            normalized_file_url = normalize_url(
-                file_url, parent_url=normalized_url,
+            absolute_file_url = relative_url_to_absolute(
+                file_url, parent_url=url,
             )
-            file_path = download_file(normalized_file_url, files_dir)
+            file_path = download_file(absolute_file_url, files_dir)
             file_paths[file_url] = file_path
     return file_paths

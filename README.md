@@ -26,5 +26,13 @@ optional arguments:
   -h, --help            display help for command
 ```
 
-### Demo:
+## Demo:
+
+### Downloading page:
 [![asciicast](https://asciinema.org/a/vq7tAa3St57ZJZXw8J1SVaOvt.svg)](https://asciinema.org/a/vq7tAa3St57ZJZXw8J1SVaOvt)
+
+### Dowloading page with images:
+[![asciicast](https://asciinema.org/a/XqXn5f8RV1svMunmbUvhW7RQv.svg)](https://asciinema.org/a/XqXn5f8RV1svMunmbUvhW7RQv)
+
+### Downloading page with images, links, scripts:
+[![asciicast](https://asciinema.org/a/rV0P0pPFQEY8jYRiQ1QTCwIt5.svg)](https://asciinema.org/a/rV0P0pPFQEY8jYRiQ1QTCwIt5)
